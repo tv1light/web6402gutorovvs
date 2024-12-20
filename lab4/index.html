@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список коктейлей</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Список коктейлей</h1>
+    <a href="pages/add-cocktail.html" class="card-link add-cocktail-button">Добавить коктейль</a>
+</header>
+<main>
+    <div class="cocktail-container">
+        <div class="cocktail-grid">
+            <div class="cocktail-card">
+                <img src="resources/long-island-iced-tea.jpg" alt="Long Island" class="card-image">
+                <h2>Long Island</h2>
+                <ul>
+                    <li>Водка</li>
+                    <li>Ром</li>
+                    <li>Джин</li>
+                    <li>Текила</li>
+                    <li>Трипл-сек</li>
+                    <li>Лимонный сок</li>
+                    <li>Кока-кола</li>
+                </ul>
+                <a href="pages/long-island.html" class="card-link">Подробнее</a>
+            </div>
+            <div class="cocktail-card">
+                <img src="resources/margarita.jpg" alt="Margarita" class="card-image">
+                <h2>Margarita</h2>
+                <ul>
+                    <li>Текила</li>
+                    <li>Ликер трипл-сек</li>
+                    <li>Лаймовый сок</li>
+                    <li>Соль</li>
+                </ul>
+                <a href="pages/margarita.html" class="card-link">Подробнее</a>
+            </div>
+            <div class="cocktail-card">
+                <img src="resources/penicillin.jpg" alt="Penicillin" class="card-image">
+                <h2>Penicillin</h2>
+                <ul>
+                    <li>Виски</li>
+                    <li>Мед</li>
+                    <li>Лимонный сок</li>
+                    <li>Имбирь</li>
+                </ul>
+                <a href="pages/penicillin.html" class="card-link">Подробнее</a>
+            </div>
+            <div class="cocktail-card">
+                <img src="resources/maitai.jpg" alt="Mai Tai" class="card-image">
+                <h2>Mai Tai</h2>
+                <ul>
+                    <li>Светлый ром</li>
+                    <li>Темный ром</li>
+                    <li>Ликер трипл-сек</li>
+                    <li>Сок лайма</li>
+                    <li>Миндальный сироп</li>
+                </ul>
+                <a href="pages/mai-tai.html" class="card-link">Подробнее</a>
+            </div>
+            <div class="cocktail-card load-button" onclick="fetchCocktails()">
+                <h2>Загрузить коктейли</h2>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+<script>
+    async function fetchCocktails() {
+        const apiUrl = "http://localhost:8000/cocktails";
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
+
+            const data = await response.json();
+
+            // Доступ к массиву "cocktails" в объекте
+            const cocktails = data.cocktails;
+            if (!Array.isArray(cocktails)) throw new Error("Ожидался массив данных");
+
+            const listContainer = document.querySelector(".cocktail-grid");
+
+            cocktails.forEach(cocktail => {
+                // Проверяем, есть ли уже коктейль в списке
+                const existingCard = Array.from(listContainer.children).find(
+                    child => child.querySelector("h2")?.textContent === cocktail.name
+                );
+
+                if (!existingCard) {
+                    const card = document.createElement("div");
+                    card.classList.add("cocktail-card");
+
+                    const image = document.createElement("img");
+                    image.src = `resources/${cocktail.name.toLowerCase().replace(/ /g, "-")}.jpg`;
+                    image.alt = cocktail.name;
+                    image.classList.add("card-image");
+
+                    const title = document.createElement("h2");
+                    title.textContent = cocktail.name;
+
+                    const description = document.createElement("p");
+                    description.textContent = cocktail.description;
+
+                    const ingredients = document.createElement("ul");
+                    cocktail.ingredients.forEach(ingredient => {
+                        const li = document.createElement("li");
+                        li.textContent = ingredient;
+                        ingredients.appendChild(li);
+                    });
+
+                    const link = document.createElement("a");
+                    link.href = `pages/${cocktail.name.toLowerCase().replace(/ /g, "-")}.html`;
+                    link.textContent = "Подробнее";
+                    link.classList.add("card-link");
+
+                    card.append(image, title, description, ingredients, link);
+                    listContainer.appendChild(card);
+                }
+            });
+
+            // Перемещаем кнопку "Загрузить коктейли" в конец
+            const loadButton = document.querySelector(".load-button");
+            if (loadButton) {
+                listContainer.appendChild(loadButton);
+            }
+        } catch (error) {
+            alert(`Ошибка: ${error.message}`);
+            console.error("Детали ошибки:", error);
+        }
+    }
+</script>
+</html>

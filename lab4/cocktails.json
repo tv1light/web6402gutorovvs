@@ -1,0 +1,33 @@
+{
+  "/cocktails": {
+    "get": {
+      "cocktails": [
+        {
+          "id": 1,
+          "name": "Long Island Iced Tea",
+          "ingredients": [
+            "Vodka",
+            "Rum",
+            "Gin",
+            "Tequila",
+            "Triple Sec",
+            "Lemon Juice",
+            "Coke"
+          ],
+          "description": "A refreshing mix of multiple spirits with a tangy flavor."
+        },
+        {
+          "id": 2,
+          "name": "Pleasure",
+          "ingredients": [
+            "Tequila",
+            "Triple Sec",
+            "Lime Juice",
+            "Salt"
+          ],
+          "description": "A classic tequila-based cocktail with a tangy, salty rim."
+        }
+      ]
+    }
+  }
+}
